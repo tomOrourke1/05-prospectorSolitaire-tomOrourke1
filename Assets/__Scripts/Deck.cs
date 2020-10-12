@@ -5,6 +5,7 @@ using UnityEngine;
 public class Deck : MonoBehaviour
 {
     [Header("Set In Inspector")]
+    public bool startFaceUp = false;
     //suits
     public Sprite suitClub;
     public Sprite suitDiamond;
@@ -117,6 +118,7 @@ public class Deck : MonoBehaviour
 
         AddPips(card);
         AddFace(card);
+        AddBack(card);
 
         return card;
     }
@@ -224,6 +226,41 @@ public class Deck : MonoBehaviour
         return null;
     }
 
+    private void AddBack(Card card)
+    {
+        //add card back
+        _tGO = Instantiate(prefabSprite) as GameObject;
+        _tSR = _tGO.GetComponent<SpriteRenderer>();
+        _tSR.sprite = cardBack;
+        _tGO.transform.SetParent(card.transform);
+        _tGO.transform.localPosition = Vector3.zero;
+        //large sorthing order
+        _tSR.sortingOrder = 2;
+        _tGO.name = "back";
+        card.back = _tGO; //why was it greyed out?
+
+        //default to face up
+        card.faceUp = startFaceUp;
+    }
+
+
+    //shuffle the cards
+    static public void Shuffle(ref List<Card> oCards)
+    {
+        //tempo list
+        List<Card> tCards = new List<Card>();
+
+        int ndx;
+        tCards = new List<Card>();
+        while(oCards.Count > 0)
+        {
+            ndx = Random.Range(0, oCards.Count);
+            tCards.Add(oCards[ndx]);
+            oCards.RemoveAt(ndx);
+        }
+        oCards = tCards;
+    }
+
     public void ReadDeck(string deckXMLText)
     {
         xmlr = new PT_XMLReader();
@@ -300,4 +337,7 @@ public class Deck : MonoBehaviour
         }
 
     }
+
+
+
 }
